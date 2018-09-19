@@ -1,0 +1,13 @@
+1. boot.S was useful when there was only a boot processor. Now that there are
+	multiple APs, a macro like MPBOOTPHYS is helpful because it helps calculate
+	where the physical memory of the stacks for each AP is.
+2. If we have seperate kernels stacks then it keeps the kernel stack frm overflowing.
+	Plus if there is to seperte calculations/processes with a shared value then they
+	could interfere with it on the same stack. Finally is there are multiple
+	processes on one stack and one is an exception handler that eventually restores
+	the stack, then other processes could lose information or be lost altogether
+	as the stack is restored.
+3. 
+4. Each env's registers need to be stored so that when the kernel switches back,
+	the environment can continue right where it left off. The registers are stored
+	on the stack in a data structure.
