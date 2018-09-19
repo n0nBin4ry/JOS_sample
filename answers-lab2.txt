@@ -1,0 +1,23 @@
+1. The variable x would be of type uintptr_t because the code is using a virtual
+address space.
+
+2. 
+
+3. The mechanism in place to keep user programs from reading or writing kernel
+memory are the permission bits in the PTEs of the kernel pages.
+
+4. The operating system can at most take up 268,435,455 (0xFFFFFFF) bytes of 
+physical memory since the kernel base (KERNBASE) starts at virtual 0xF0000000 
+and the highest possible virtual address would be 0xFFFFFFFF
+
+5. First counting the global variables (page_free_list, kern_pgdir, npages, 
+npages_base_mem) we have 16 bytes. Then The pages array (which has pointers
+ for each PageInfo struct is 4 bytes * 32,768 (number of pages), which is 131,072
+bytes. There are also the PageInfo structs themselves which is 8 bytes * 32,768,
+equalling 262,144 bytes. The page directory itself is 4096 bytes (4KB). And finally
+there are 1024 Page tables, each taking one page, equaling 4,096 bytes (size of page) 
+* 1024 = 4,194,304 bytes (4MB). Altogether, the overhead of managing memory is
+4,591,632 bytes.
+
+6. The transition is neccesary since we haven't set up virtual memory so we can't run
+instructions in kernel space without the mapping of [0,4MB) to [KERNBASE, KERNBASE+4MB).

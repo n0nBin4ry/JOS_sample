@@ -1,0 +1,18 @@
+1. If there was a single function handler shared between all interrupts/traps
+then there wouldn't be different entry points to the kernel with differnt
+IDT code segments loaded to do different things. There would also be a problem
+for security since there wouldn't be different privilege for each interrupt
+so a user could call kernel-only interupts.
+
+2. This produces an interupt vector 13 (general protection) because vectors
+0-19 were set up with protection level 0 (kernel) so they can not be called
+from a user environment so that the kernel can stay protected (hence the general
+protection fault). If the code in softint were allowed to work then a malicious
+program can cause a page fault without there being one.
+
+3. The reason we get a protection fault is because the IDT entry for the breakpoint
+exception is set to have a kernel privilage level so user code wouldn't be able to
+call it. Therefore we must set the privilage level to permit the user level.
+
+4. The point of these mechanisms is to protect the operating system from buggy
+or malicious user code that may try to call kernel exceptions that it isn't allowed to.
